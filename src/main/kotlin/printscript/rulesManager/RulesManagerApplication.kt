@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 @SpringBootApplication
-class RulesManagerApplication{
+class RulesManagerApplication {
     @GetMapping("/")
     fun index(): String {
         return "I'm Alive!"
