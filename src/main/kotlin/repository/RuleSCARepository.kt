@@ -1,8 +1,8 @@
 package repository
 
-import model.Rule
+import model.RuleSCA
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface RuleRepository : JpaRepository<Rule, Long>
+interface RuleSCARepository : JpaRepository<RuleSCA, Long>

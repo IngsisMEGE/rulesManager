@@ -8,12 +8,14 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "rules")
-class Rule {
+@Table(name = "linting_rules")
+data class RuleLinting(
+    @Column
+    val rule: String,
+    @Column
+    val onUse: Boolean,
+) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
-
-    @Column(name = "name")
-    var name: String = ""
 }
