@@ -1,19 +1,17 @@
 package service
 
-import model.RuleFormat
-import model.RuleLinting
-import model.RuleSCA
+import model.Rule
 
 interface RuleService {
-    fun getLintRules(): List<RuleLinting>
+    fun getLintRules(): List<Rule>
 
-    fun getFormatRules(): List<RuleFormat>
+    fun getFormatRules(): List<Rule>
 
-    fun getSCARules(): List<RuleSCA>
+    fun getSCARules(): List<Rule>
 
     // fun getLintRules(userId: String): List<RuleLinting>
 
-    // fun getFormatRules(userId: String): List<RuleFormat>
+    // fun getFormatRules(userId: String): List<Rule>
 
     // fun getSCARules(userId: String): List<RuleSCA>
 }

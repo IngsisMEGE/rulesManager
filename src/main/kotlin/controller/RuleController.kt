@@ -1,8 +1,6 @@
 package controller
 
-import model.RuleFormat
-import model.RuleLinting
-import model.RuleSCA
+import model.Rule
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,7 +12,7 @@ import service.RuleService
 @RequestMapping("/rules")
 class RuleController(private val ruleService: RuleService) {
     @GetMapping("/get/lint")
-    fun getLintRules(): List<RuleLinting> {
+    fun getLintRules(): List<Rule> {
         try {
             return ruleService.getLintRules()
         } catch (e: Exception) {
@@ -23,7 +21,7 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @GetMapping("/get/format")
-    fun getFormatRules(): List<RuleFormat> {
+    fun getFormatRules(): List<Rule> {
         try {
             return ruleService.getFormatRules()
         } catch (e: Exception) {
@@ -32,7 +30,7 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @GetMapping("/get/sca")
-    fun getSCARules(): List<RuleSCA> {
+    fun getSCARules(): List<Rule> {
         try {
             return ruleService.getSCARules()
         } catch (e: Exception) {
@@ -52,7 +50,7 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @GetMapping("/get/user/format")
-    fun getUserFormatRules(authentication: JwtAuthenticationToken): List<RuleFormat> {
+    fun getUserFormatRules(authentication: JwtAuthenticationToken): List<Rule> {
         try {
             val jwt = authentication.token
             val userId = jwt.claims["sub"] as String
