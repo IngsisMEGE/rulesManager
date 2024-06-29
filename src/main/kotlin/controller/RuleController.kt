@@ -2,6 +2,7 @@ package controller
 
 import model.Rule
 import org.springframework.http.HttpStatus
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -38,8 +39,8 @@ class RuleController(private val ruleService: RuleService) {
         }
     }
 
-    /*@GetMapping("/get/user/lint")
-    fun getUserLintRules(authentication: JwtAuthenticationToken): List<RuleLinting> {
+    @GetMapping("/get/user/lint")
+    fun getUserLintRules(authentication: JwtAuthenticationToken): List<Rule> {
         try {
             val jwt = authentication.token
             val userId = jwt.claims["sub"] as String
@@ -61,7 +62,7 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @GetMapping("/get/user/sca")
-    fun getUserSCARules(authentication: JwtAuthenticationToken): List<RuleSCA> {
+    fun getUserSCARules(authentication: JwtAuthenticationToken): List<Rule> {
         try {
             val jwt = authentication.token
             val userId = jwt.claims["sub"] as String
@@ -69,5 +70,5 @@ class RuleController(private val ruleService: RuleService) {
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
-    }*/
+    }
 }

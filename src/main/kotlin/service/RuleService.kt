@@ -9,9 +9,9 @@ interface RuleService {
 
     fun getSCARules(): List<Rule>
 
-    // fun getLintRules(userId: String): List<RuleLinting>
+    fun getLintRules(userEmail: String): List<Rule>
 
-    // fun getFormatRules(userId: String): List<Rule>
+    fun getFormatRules(userEmail: String): List<Rule>
 
-    // fun getSCARules(userId: String): List<RuleSCA>
+    fun getSCARules(userEmail: String): List<Rule>
 }

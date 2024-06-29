@@ -8,7 +8,6 @@ import service.RuleService
 @Service
 class RuleServiceImpl(
     private val ruleRepository: RuleRepository,
-
 ) : RuleService {
     override fun getLintRules(): List<Rule> = ruleRepository.findAllLintingRules()
 
@@ -16,9 +15,9 @@ class RuleServiceImpl(
 
     override fun getSCARules(): List<Rule> = ruleRepository.findAllScaRules()
 
-    // override fun getLintRules(userId: String) = ruleLintingRepository.findAllByUserId(userId)
+    override fun getLintRules(userEmail: String) = ruleRepository.findUserLintingRules(userEmail)
 
-    // override fun getFormatRules(userId: String) = ruleRepository.findAllByUserId(userId)
+    override fun getFormatRules(userEmail: String) = ruleRepository.findUserFormatingRules(userEmail)
 
-    // override fun getSCARules(userId: String) = ruleSCARepository.findAllByUserId(userId)
+    override fun getSCARules(userEmail: String) = ruleRepository.findUserScaRules(userEmail)
 }
