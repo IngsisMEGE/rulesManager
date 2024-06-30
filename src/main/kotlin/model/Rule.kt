@@ -9,16 +9,16 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "format_rules")
+@Table(name = "rules")
 data class Rule(
     @Column
-    val name: String,
+    var name: String,
     @Column
-    val onUse: Boolean,
+    var onUse: Boolean,
     @Column
-    val type: RuleType,
+    var type: RuleType,
     @Column(nullable = true)
-    val value: String,
+    var value: String,
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

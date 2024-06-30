@@ -1,17 +1,24 @@
 package service
 
-import model.Rule
+import dto.RuleDTO
+import dto.SimpleRuleDTO
 
 interface RuleService {
-    fun getLintRules(): List<Rule>
+    fun getUserRules(userEmail: String): List<SimpleRuleDTO>
 
-    fun getFormatRules(): List<Rule>
+    fun getLintRules(userEmail: String): List<SimpleRuleDTO>
 
-    fun getSCARules(): List<Rule>
+    fun getFormatRules(userEmail: String): List<SimpleRuleDTO>
 
-    fun getLintRules(userEmail: String): List<Rule>
+    fun getSCARules(userEmail: String): List<SimpleRuleDTO>
 
-    fun getFormatRules(userEmail: String): List<Rule>
+    fun updateRule(
+        userEmail: String,
+        rule: RuleDTO,
+    ): SimpleRuleDTO
 
-    fun getSCARules(userEmail: String): List<Rule>
+    fun updateRuleOnUse(
+        userEmail: String,
+        rule: RuleDTO,
+    ): SimpleRuleDTO
 }
