@@ -44,14 +44,14 @@ tasks.withType(KotlinCompile) {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-tasks.register('setupNewrelic', Download) {
-    mkdir 'newrelic'
-    src 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
-    dest file('newrelic/newrelic-java.zip')
-    doLast {
-        copy {
-            from zipTree(file('newrelic/newrelic-java.zip'))
-            into rootDir
-        }
-    }
-}
+
+//task downloadNewrelic(type: Download) {
+//    mkdir 'newrelic'
+//    src 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
+//    dest file('newrelic')
+//}
+//
+//task unzipNewrelic(type: Copy) {
+//    from zipTree(file('newrelic/newrelic-java.zip'))
+//    into rootDir
+//}
