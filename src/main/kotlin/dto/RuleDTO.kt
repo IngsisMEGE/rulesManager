@@ -15,8 +15,6 @@ data class RuleDTO(
 )
 
 data class SimpleRuleDTO(
-    val id: Long,
     val name: String,
     val value: String,
-    val ruleType: String,
 )
