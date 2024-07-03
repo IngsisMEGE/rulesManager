@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -64,26 +65,26 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @PutMapping("/update/user/")
-    fun updateUserRule(
+    fun updateUserRules(
         @AuthenticationPrincipal userData: Jwt,
-        rule: RuleDTO,
-    ): SimpleRuleDTO {
+        @RequestBody rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO> {
         try {
             val userMail = userData.claims["email"].toString()
-            return ruleService.updateRule(userMail, rule)
+            return ruleService.updateRule(userMail, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
     }
 
     @PutMapping("/update/user/onUse")
-    fun updateUserLintRulesOnUse(
+    fun updateUserRulesOnUse(
         @AuthenticationPrincipal userData: Jwt,
-        rule: RuleDTO,
-    ): SimpleRuleDTO {
+        @RequestBody rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO> {
         try {
             val userMail = userData.claims["email"].toString()
-            return ruleService.updateRuleOnUse(userMail, rule)
+            return ruleService.updateRuleOnUse(userMail, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }

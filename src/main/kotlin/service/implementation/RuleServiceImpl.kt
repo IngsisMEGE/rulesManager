@@ -36,31 +36,35 @@ class RuleServiceImpl(
 
     override fun updateRule(
         userEmail: String,
-        rule: RuleDTO,
-    ): SimpleRuleDTO {
-        val ruleType = RuleType.valueOf(rule.ruleType.uppercase(Locale.getDefault()))
-        val ruleToUpdate = ruleRepository.findById(rule.id).orElseThrow { throw Exception("Rule not found") }
+        rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO> {
+        return rules.map { ruleDTO ->
+            val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
+            val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow { throw Exception("Rule not found") }
 
-        ruleToUpdate.name = rule.name
-        ruleToUpdate.value = rule.value
-        ruleToUpdate.type = ruleType
-        ruleToUpdate.updatedAt = LocalDateTime.now()
+            ruleToUpdate.name = ruleDTO.name
+            ruleToUpdate.value = ruleDTO.value
+            ruleToUpdate.type = ruleType
+            ruleToUpdate.updatedAt = LocalDateTime.now()
 
-        val updatedRule = ruleRepository.save(ruleToUpdate)
-        return ruleToSimpleRuleDTO(updatedRule)
+            val updatedRule = ruleRepository.save(ruleToUpdate)
+            ruleToSimpleRuleDTO(updatedRule)
+        }
     }
 
     override fun updateRuleOnUse(
         userEmail: String,
-        rule: RuleDTO,
-    ): SimpleRuleDTO {
-        val ruleToUpdate = ruleRepository.findById(rule.id).orElseThrow { throw Exception("Rule not found") }
+        rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO> {
+        return rules.map { ruleDTO ->
+            val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow { throw Exception("Rule not found") }
 
-        ruleToUpdate.onUse = rule.onUse
-        ruleToUpdate.updatedAt = LocalDateTime.now()
+            ruleToUpdate.onUse = ruleDTO.onUse
+            ruleToUpdate.updatedAt = LocalDateTime.now()
 
-        val updatedRule = ruleRepository.save(ruleToUpdate)
-        return ruleToSimpleRuleDTO(updatedRule)
+            val updatedRule = ruleRepository.save(ruleToUpdate)
+            ruleToSimpleRuleDTO(updatedRule)
+        }
     }
 
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
