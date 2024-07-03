@@ -64,7 +64,7 @@ class RuleController(private val ruleService: RuleService) {
     }
 
     @PutMapping("/update/user/")
-    fun updateUserLintRules(
+    fun updateUserRule(
         @AuthenticationPrincipal userData: Jwt,
         rule: RuleDTO,
     ): SimpleRuleDTO {

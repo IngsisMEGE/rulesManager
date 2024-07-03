@@ -1,0 +1,40 @@
+name: Change Tracking Marker
+on:
+  release:
+    types: [published]
+
+jobs:
+  newrelic:
+    runs-on: ubuntu-latest
+    name: New Relic
+    steps:
+      # This step builds a var with the release tag value to use later
+      - name: Set Release Version from Tag
+        run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      # This step creates a new Change Tracking Marker
+      - name: New Relic Application Deployment Marker
+        uses: newrelic/deployment-marker-action@v2.3.0
+
+      - name: Extract version
+        id: extract_version
+        run: |
+          # Fetch all tags
+          git fetch --tags
+          # Attempt to get the latest tag in the repository
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -z "$latest_tag" ]]; then
+            # Error out if no tags are found
+            echo "No tags found in the repository"
+            exit 1
+          else
+            VERSION=$latest_tag
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Extracted version: $VERSION"
+
+        with:
+          apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
+          guid: ${{ secrets.NEW_RELIC_DEPLOYMENT_ENTITY_GUID }}
+          version: ${{ env.VERSION }}
+          user: "${{ github.actor }}"
