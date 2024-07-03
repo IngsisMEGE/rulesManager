@@ -14,11 +14,11 @@ interface RuleService {
 
     fun updateRule(
         userEmail: String,
-        rule: RuleDTO,
-    ): SimpleRuleDTO
+        rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO>
 
     fun updateRuleOnUse(
         userEmail: String,
-        rule: RuleDTO,
-    ): SimpleRuleDTO
+        rules: List<RuleDTO>,
+    ): List<SimpleRuleDTO>
 }
