@@ -38,10 +38,8 @@ class RuleServiceTest {
 
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
-            id = rule.id,
             name = rule.name,
             value = rule.value,
-            ruleType = rule.type.name,
         )
     }
 }
