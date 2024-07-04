@@ -12,7 +12,8 @@ import service.implementation.RuleServiceImpl
 
 class RuleServiceTest {
     private val ruleRepository = mock(RuleRepository::class.java)
-    private val ruleService = RuleServiceImpl(ruleRepository)
+    private val snippetManagerService: SnippetManagerService = mock()
+    private val ruleService = RuleServiceImpl(ruleRepository, snippetManagerService)
 
     @Test
     fun `getLintRules for user returns expected rules`() {
