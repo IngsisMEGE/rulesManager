@@ -4,15 +4,18 @@ import dto.RuleDTO
 import dto.SimpleRuleDTO
 import model.Rule
 import model.RuleType
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import repository.RuleRepository
 import service.RuleService
+import service.SnippetManagerService
 import java.time.LocalDateTime
 import java.util.Locale
 
 @Service
 class RuleServiceImpl(
     private val ruleRepository: RuleRepository,
+    private val snippetManagerService: SnippetManagerService,
 ) : RuleService {
     override fun getUserRules(userEmail: String): List<SimpleRuleDTO> {
         val rules = ruleRepository.findAllUserRules(userEmail)
@@ -35,9 +38,10 @@ class RuleServiceImpl(
     }
 
     override fun updateRule(
-        userEmail: String,
+        userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
+        snippetManagerService.snippetsPending(userEmail).block()
         return rules.map { ruleDTO ->
             val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
             val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow { throw Exception("Rule not found") }
@@ -53,9 +57,10 @@ class RuleServiceImpl(
     }
 
     override fun updateRuleOnUse(
-        userEmail: String,
+        userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
+        snippetManagerService.snippetsPending(userEmail).block()
         return rules.map { ruleDTO ->
             val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow { throw Exception("Rule not found") }
 

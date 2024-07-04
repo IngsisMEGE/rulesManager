@@ -2,6 +2,7 @@ package service
 
 import dto.RuleDTO
 import dto.SimpleRuleDTO
+import org.springframework.security.oauth2.jwt.Jwt
 
 interface RuleService {
     fun getUserRules(userEmail: String): List<SimpleRuleDTO>
@@ -13,12 +14,12 @@ interface RuleService {
     fun getSCARules(userEmail: String): List<SimpleRuleDTO>
 
     fun updateRule(
-        userEmail: String,
+        userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO>
 
     fun updateRuleOnUse(
-        userEmail: String,
+        userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO>
 }

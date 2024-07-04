@@ -70,8 +70,7 @@ class RuleController(private val ruleService: RuleService) {
         @RequestBody rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.updateRule(userMail, rules)
+            return ruleService.updateRule(userData, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -83,8 +82,7 @@ class RuleController(private val ruleService: RuleService) {
         @RequestBody rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.updateRuleOnUse(userMail, rules)
+            return ruleService.updateRuleOnUse(userData, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
