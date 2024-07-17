@@ -59,3 +59,15 @@ jobs:
           tags: |
             ghcr.io/ingsismege/rulemanager:latest.SNAPSHOT
             ghcr.io/ingsismege/rulemanager:${{ env.VERSION }}.SNAPSHOT
+
+      - name: Update dev server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY_DEV }}
+          script: |
+            cd INFRAingsis/dev/
+            docker compose -f docker-compose.dev.yml stop ruleManagerApi
+            docker compose -f docker-compose.dev.yml pull ruleManagerApi
+            docker compose -f docker-compose.dev.yml up ruleManagerApi -d --build
