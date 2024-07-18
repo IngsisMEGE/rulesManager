@@ -1,7 +1,6 @@
 package dto
 
 import org.springframework.data.annotation.ReadOnlyProperty
-import org.springframework.security.oauth2.jwt.Jwt
 
 data class RuleDTO(
     val id: Long,
@@ -20,24 +19,12 @@ data class SimpleRuleDTO(
     val value: String,
 )
 
-data class FormatSnippetWithRulesDTO(
-    val snippetId: Long,
+data class FormatRulesDTO(
     val formatRules: List<SimpleRuleDTO>,
     val lintingRules: List<SimpleRuleDTO>,
 )
 
-data class FormatSnippetWithRulesRedisDTO(
-    val formatSnippetWithRules: FormatSnippetWithRulesDTO,
-    val userData: Jwt,
-)
-
-data class SCASnippetWithRulesDTO(
-    val snippetId: Long,
+data class SCARulesDTO(
     val scaRules: List<SimpleRuleDTO>,
     val lintingRules: List<SimpleRuleDTO>,
-)
-
-data class SCASnippetWithRulesRedisDTO(
-    val scaSnippetWithRules: SCASnippetWithRulesDTO,
-    val userData: Jwt,
 )
