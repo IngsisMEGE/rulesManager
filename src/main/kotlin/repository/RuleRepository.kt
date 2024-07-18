@@ -14,21 +14,24 @@ interface RuleRepository : JpaRepository<Rule, Long> {
         @Param("userId") userEmail: String,
     ): List<Rule>
 
-    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type AND rule.onUse = true ")
+    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type")
     fun findUserLintingRules(
         @Param("userId") userEmail: String,
         @Param("type") type: RuleType = RuleType.LINTING,
     ): List<Rule>
 
-    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type AND rule.onUse = true ")
+    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type")
     fun findUserFormatingRules(
         @Param("userId") userEmail: String,
         @Param("type") type: RuleType = RuleType.FORMATING,
     ): List<Rule>
 
-    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type AND rule.onUse = true ")
+    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type")
     fun findUserScaRules(
         @Param("userId") userEmail: String,
         @Param("type") type: RuleType = RuleType.SCA,
     ): List<Rule>
+
+    @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userEmail ")
+    fun findRuleByUser(userEmail: String): List<Rule>
 }

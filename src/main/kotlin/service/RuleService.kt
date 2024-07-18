@@ -5,21 +5,30 @@ import dto.SimpleRuleDTO
 import org.springframework.security.oauth2.jwt.Jwt
 
 interface RuleService {
-    fun getUserRules(userEmail: String): List<SimpleRuleDTO>
+    fun getUserRules(userData: Jwt): List<SimpleRuleDTO>
 
-    fun getLintRules(userEmail: String): List<SimpleRuleDTO>
+    fun getLintRules(userData: Jwt): List<SimpleRuleDTO>
 
-    fun getFormatRules(userEmail: String): List<SimpleRuleDTO>
+    fun getFormatRules(userData: Jwt): List<SimpleRuleDTO>
 
-    fun getSCARules(userEmail: String): List<SimpleRuleDTO>
+    fun getSCARules(userData: Jwt): List<SimpleRuleDTO>
+
+    fun getUserFormatRules(userData: Jwt): List<RuleDTO>
+
+    fun getUserLintingRules(userData: Jwt): List<RuleDTO>
 
     fun updateRule(
-        userEmail: Jwt,
+        userData: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO>
 
     fun updateRuleOnUse(
-        userEmail: Jwt,
+        userData: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO>
+
+    fun updateRules(
+        userData: Jwt,
+        rules: List<RuleDTO>,
+    ): List<RuleDTO>
 }

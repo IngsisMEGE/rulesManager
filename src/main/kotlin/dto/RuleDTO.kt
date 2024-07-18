@@ -1,17 +1,16 @@
 package dto
 
 import org.springframework.data.annotation.ReadOnlyProperty
+import java.time.LocalDateTime
 
 data class RuleDTO(
     val id: Long,
     val name: String,
     val value: String,
     val ruleType: String,
-    val onUse: Boolean,
+    val isActive: Boolean,
     @ReadOnlyProperty
-    val createdAt: String,
-    @ReadOnlyProperty
-    val updatedAt: String,
+    val updatedAt: LocalDateTime,
 )
 
 data class SimpleRuleDTO(

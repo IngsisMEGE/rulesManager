@@ -25,8 +25,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getUserRules(userMail)
+            return ruleService.getUserRules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -37,8 +36,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getLintRules(userMail)
+            return ruleService.getLintRules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -49,8 +47,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getFormatRules(userMail)
+            return ruleService.getFormatRules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -61,8 +58,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getSCARules(userMail)
+            return ruleService.getSCARules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -87,6 +83,39 @@ class RuleController(private val ruleService: RuleService) {
     ): List<SimpleRuleDTO> {
         try {
             return ruleService.updateRuleOnUse(userData, rules)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
+        }
+    }
+
+    @GetMapping("/user/format/get")
+    fun getFormattingRoles(
+        @AuthenticationPrincipal userData: Jwt,
+    ): List<RuleDTO> {
+        try {
+            return ruleService.getUserFormatRules(userData)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
+        }
+    }
+
+    @GetMapping("/user/linting/get")
+    fun getUserLintingRules(
+        @AuthenticationPrincipal userData: Jwt,
+    ): List<RuleDTO> {
+        try {
+            return ruleService.getUserLintingRules(userData)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
+        }
+    }
+    @PutMapping("user/update/rules")
+    fun updateRules(
+        @AuthenticationPrincipal userData: Jwt,
+        @RequestBody rules: List<RuleDTO>,
+    ): List<RuleDTO> {
+        try {
+            return ruleService.updateRules(userData, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
