@@ -82,12 +82,13 @@ class RuleServiceImpl(
     ): List<SimpleRuleDTO> {
         logger.debug("Entering updateRule for user with rules")
         try {
-            val updatedRules = editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
-                val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
-                ruleToUpdate.name = ruleDTO.name
-                ruleToUpdate.value = ruleDTO.value
-                ruleToUpdate.type = ruleType
-            }
+            val updatedRules =
+                editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
+                    val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
+                    ruleToUpdate.name = ruleDTO.name
+                    ruleToUpdate.value = ruleDTO.value
+                    ruleToUpdate.type = ruleType
+                }
             logger.debug("Exiting updateRule")
             return updatedRules
         } catch (e: Exception) {
@@ -102,9 +103,10 @@ class RuleServiceImpl(
     ): List<SimpleRuleDTO> {
         logger.debug("Entering updateRuleOnUse for user with rules")
         try {
-            val updatedRules = editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
-                ruleToUpdate.onUse = ruleDTO.onUse
-            }
+            val updatedRules =
+                editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
+                    ruleToUpdate.onUse = ruleDTO.onUse
+                }
             logger.debug("Exiting updateRuleOnUse")
             return updatedRules
         } catch (e: Exception) {
@@ -124,10 +126,11 @@ class RuleServiceImpl(
 
         val updatedRules =
             rules.map { ruleDTO ->
-                val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow {
-                    logger.error("Rule not found with id: ${ruleDTO.id}")
-                    throw Exception("Rule not found")
-                }
+                val ruleToUpdate =
+                    ruleRepository.findById(ruleDTO.id).orElseThrow {
+                        logger.error("Rule not found with id: ${ruleDTO.id}")
+                        throw Exception("Rule not found")
+                    }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()

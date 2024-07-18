@@ -28,9 +28,10 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
         userData: Jwt,
     ): Mono<String> {
         logger.debug("Entering updateSnippetsSCA for user")
-        val headers = getHeader().apply {
-            set("Authorization", "Bearer ${userData.tokenValue}")
-        }
+        val headers =
+            getHeader().apply {
+                set("Authorization", "Bearer ${userData.tokenValue}")
+            }
         return webClient.put()
             .uri("$snippetManagerURL/pending/user/sca")
             .headers { httpHeaders -> httpHeaders.addAll(headers) }
@@ -66,9 +67,10 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
         userData: Jwt,
     ): Mono<String> {
         logger.debug("Entering updateSnippetFormat for user")
-        val headers = getHeader().apply {
-            set("Authorization", "Bearer ${userData.tokenValue}")
-        }
+        val headers =
+            getHeader().apply {
+                set("Authorization", "Bearer ${userData.tokenValue}")
+            }
         return webClient.put()
             .uri("$snippetManagerURL/pending/user/format")
             .headers { httpHeaders -> httpHeaders.addAll(headers) }
@@ -98,6 +100,7 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
             .doOnError { e -> logger.error("Error updating format snippets for user", e) }
             .doFinally { logger.debug("Exiting updateSnippetFormat for user") }
     }
+
     private fun getHeader(): HttpHeaders {
         val correlationId = MDC.get(CORRELATION_ID_KEY)
         val headers =
