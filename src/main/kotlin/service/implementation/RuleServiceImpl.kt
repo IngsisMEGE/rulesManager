@@ -6,6 +6,8 @@ import dto.SCARulesDTO
 import dto.SimpleRuleDTO
 import model.Rule
 import model.RuleType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import repository.RuleRepository
@@ -19,35 +21,79 @@ class RuleServiceImpl(
     private val ruleRepository: RuleRepository,
     private val snippetManagerService: SnippetManagerService,
 ) : RuleService {
+    private val logger: Logger = LoggerFactory.getLogger(RuleServiceImpl::class.java)
+
     override fun getUserRules(userEmail: String): List<SimpleRuleDTO> {
-        val rules = ruleRepository.findAllUserRules(userEmail)
-        return rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Entering getUserRules for user")
+        try {
+            val rules = ruleRepository.findAllUserRules(userEmail)
+            logger.info("Fetched ${rules.size} rules for user")
+            val result = rules.map { ruleToSimpleRuleDTO(it) }
+            logger.debug("Exiting getUserRules")
+            return result
+        } catch (e: Exception) {
+            logger.error("Error fetching user rules", e)
+            throw e
+        }
     }
 
     override fun getLintRules(userEmail: String): List<SimpleRuleDTO> {
-        val rules = ruleRepository.findUserLintingRules(userEmail)
-        return rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Entering getLintRules for user")
+        try {
+            val rules = ruleRepository.findUserLintingRules(userEmail)
+            val result = rules.map { ruleToSimpleRuleDTO(it) }
+            logger.debug("Exiting getLintRules")
+            return result
+        } catch (e: Exception) {
+            logger.error("Error fetching lint rules", e)
+            throw e
+        }
     }
 
     override fun getFormatRules(userEmail: String): List<SimpleRuleDTO> {
-        val rules = ruleRepository.findUserFormatingRules(userEmail)
-        return rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Entering getFormatRules for user")
+        try {
+            val rules = ruleRepository.findUserFormatingRules(userEmail)
+            val result = rules.map { ruleToSimpleRuleDTO(it) }
+            logger.debug("Exiting getFormatRules")
+            return result
+        } catch (e: Exception) {
+            logger.error("Error fetching format rules", e)
+            throw e
+        }
     }
 
     override fun getSCARules(userEmail: String): List<SimpleRuleDTO> {
-        val rules = ruleRepository.findUserScaRules(userEmail)
-        return rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Entering getSCARules for user")
+        try {
+            val rules = ruleRepository.findUserScaRules(userEmail)
+            val result = rules.map { ruleToSimpleRuleDTO(it) }
+            logger.debug("Exiting getSCARules")
+            return result
+        } catch (e: Exception) {
+            logger.error("Error fetching SCA rules", e)
+            throw e
+        }
     }
 
     override fun updateRule(
         userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
-        return editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
-            val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
-            ruleToUpdate.name = ruleDTO.name
-            ruleToUpdate.value = ruleDTO.value
-            ruleToUpdate.type = ruleType
+        logger.debug("Entering updateRule for user with rules")
+        try {
+            val updatedRules =
+                editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
+                    val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
+                    ruleToUpdate.name = ruleDTO.name
+                    ruleToUpdate.value = ruleDTO.value
+                    ruleToUpdate.type = ruleType
+                }
+            logger.debug("Exiting updateRule")
+            return updatedRules
+        } catch (e: Exception) {
+            logger.error("Error updating rules for user", e)
+            throw e
         }
     }
 
@@ -55,8 +101,17 @@ class RuleServiceImpl(
         userEmail: Jwt,
         rules: List<RuleDTO>,
     ): List<SimpleRuleDTO> {
-        return editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
-            ruleToUpdate.onUse = ruleDTO.onUse
+        logger.debug("Entering updateRuleOnUse for user with rules")
+        try {
+            val updatedRules =
+                editRules(userEmail, rules) { ruleDTO, ruleToUpdate ->
+                    ruleToUpdate.onUse = ruleDTO.onUse
+                }
+            logger.debug("Exiting updateRuleOnUse")
+            return updatedRules
+        } catch (e: Exception) {
+            logger.error("Error updating rules on use for user", e)
+            throw e
         }
     }
 
@@ -65,12 +120,17 @@ class RuleServiceImpl(
         rules: List<RuleDTO>,
         updateRuleProperties: (RuleDTO, Rule) -> Unit,
     ): List<SimpleRuleDTO> {
+        logger.debug("Entering editRules for user with rules")
         var runSCA = false
         var runFormat = false
 
         val updatedRules =
             rules.map { ruleDTO ->
-                val ruleToUpdate = ruleRepository.findById(ruleDTO.id).orElseThrow { Exception("Rule not found") }
+                val ruleToUpdate =
+                    ruleRepository.findById(ruleDTO.id).orElseThrow {
+                        logger.error("Rule not found with id: ${ruleDTO.id}")
+                        throw Exception("Rule not found")
+                    }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()
@@ -83,12 +143,14 @@ class RuleServiceImpl(
                 }
 
                 val updatedRule = ruleRepository.save(ruleToUpdate)
+                logger.info("Updated rule with id: ${ruleDTO.id}")
                 ruleToSimpleRuleDTO(updatedRule)
             }
 
         if (runSCA) updateStatusSCA(userEmail)
         if (runFormat) updateStatusFormat(userEmail)
 
+        logger.debug("Exiting editRules")
         return updatedRules
     }
 
@@ -100,14 +162,28 @@ class RuleServiceImpl(
     }
 
     private fun updateStatusSCA(userData: Jwt) {
-        val email = userData.claims["email"].toString()
-        val rules = SCARulesDTO(getSCARules(email), getLintRules(email))
-        snippetManagerService.updateSnippetsSCA(rules, userData)
+        logger.debug("Entering updateStatusSCA for user")
+        try {
+            val email = userData.claims["email"].toString()
+            val rules = SCARulesDTO(getSCARules(email), getLintRules(email))
+            snippetManagerService.updateSnippetsSCA(rules, userData)
+            logger.debug("Exiting updateStatusSCA")
+        } catch (e: Exception) {
+            logger.error("Error updating status SCA", e)
+            throw e
+        }
     }
 
     private fun updateStatusFormat(userData: Jwt) {
-        val email = userData.claims["email"].toString()
-        val rules = FormatRulesDTO(getFormatRules(email), getLintRules(email))
-        snippetManagerService.updateSnippetFormat(rules, userData)
+        logger.debug("Entering updateStatusFormat for user")
+        try {
+            val email = userData.claims["email"].toString()
+            val rules = FormatRulesDTO(getFormatRules(email), getLintRules(email))
+            snippetManagerService.updateSnippetFormat(rules, userData)
+            logger.debug("Exiting updateStatusFormat")
+        } catch (e: Exception) {
+            logger.error("Error updating status format", e)
+            throw e
+        }
     }
 }

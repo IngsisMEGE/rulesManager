@@ -1,8 +1,12 @@
 package controller
 
+import com.newrelic.agent.deps.org.slf4j.MDC
 import dto.RuleDTO
 import dto.SimpleRuleDTO
+import logs.CorrIdFilter.Companion.CORRELATION_ID_KEY
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.GetMapping
@@ -85,6 +89,13 @@ class RuleController(private val ruleService: RuleService) {
             return ruleService.updateRuleOnUse(userData, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
+        }
+    }
+
+    private fun getHeaders(): HttpHeaders {
+        return HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+            set("X-Correlation-Id", MDC.get(CORRELATION_ID_KEY))
         }
     }
 }
