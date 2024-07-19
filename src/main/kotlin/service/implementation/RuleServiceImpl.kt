@@ -38,19 +38,6 @@ class RuleServiceImpl(
         }
     }
 
-    override fun getLintRules(userData: Jwt): List<SimpleRuleDTO> {
-        logger.debug("Entering getLintRules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findUserLintingRules(userEmail)
-            val result = rules.map { ruleToSimpleRuleDTO(it) }
-            logger.debug("Exiting getLintRules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching lint rules", e)
-            throw e
-        }
-    }
 
     override fun getFormatRules(userData: Jwt): List<SimpleRuleDTO> {
         logger.debug("Entering getFormatRules for user")
@@ -85,30 +72,6 @@ class RuleServiceImpl(
         try {
             val userEmail = userData.claims["email"].toString()
             val rules = ruleRepository.findUserFormatingRules(userEmail)
-            val result =
-                rules.map {
-                    RuleDTO(
-                        id = it.id,
-                        name = it.name,
-                        value = it.value,
-                        ruleType = it.type.name,
-                        isActive = it.isActive,
-                        updatedAt = it.updatedAt,
-                    )
-                }
-            logger.debug("Exiting getUserFormatRules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching user format rules", e)
-            throw e
-        }
-    }
-
-    override fun getUserLintingRules(userData: Jwt): List<RuleDTO> {
-        logger.debug("Entering getUserLintingRules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findUserLintingRules(userEmail)
             val result =
                 rules.map {
                     RuleDTO(
@@ -206,10 +169,10 @@ class RuleServiceImpl(
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()
-                if (ruleToUpdate.type == RuleType.SCA || ruleToUpdate.type == RuleType.LINTING) {
+                if (ruleToUpdate.type == RuleType.SCA) {
                     runSCA = true
                 }
-                if (ruleToUpdate.type == RuleType.LINTING) {
+                if (ruleToUpdate.type == RuleType.FORMATING) {
                     runFormat = true
                 }
 
@@ -244,10 +207,10 @@ class RuleServiceImpl(
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()
 
-                if (ruleToUpdate.type == RuleType.SCA || ruleToUpdate.type == RuleType.LINTING) {
+                if (ruleToUpdate.type == RuleType.SCA) {
                     runSCA = true
                 }
-                if (ruleToUpdate.type == RuleType.LINTING) {
+                if (ruleToUpdate.type == RuleType.FORMATING) {
                     runFormat = true
                 }
 
@@ -280,7 +243,7 @@ class RuleServiceImpl(
     private fun updateStatusSCA(userData: Jwt) {
         logger.debug("Entering updateStatusSCA for user")
         try {
-            val rules = SCARulesDTO(getSCARules(userData), getLintRules(userData))
+            val rules = SCARulesDTO(getSCARules(userData))
             snippetManagerService.updateSnippetsSCA(rules, userData)
             logger.debug("Exiting updateStatusSCA")
         } catch (e: Exception) {
@@ -292,7 +255,7 @@ class RuleServiceImpl(
     private fun updateStatusFormat(userData: Jwt) {
         logger.debug("Entering updateStatusFormat for user")
         try {
-            val rules = FormatRulesDTO(getFormatRules(userData), getLintRules(userData))
+            val rules = FormatRulesDTO(getFormatRules(userData))
             snippetManagerService.updateSnippetFormat(rules, userData)
             logger.debug("Exiting updateStatusFormat")
         } catch (e: Exception) {

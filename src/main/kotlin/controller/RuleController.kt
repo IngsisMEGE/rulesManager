@@ -31,17 +31,6 @@ class RuleController(private val ruleService: RuleService) {
         }
     }
 
-    @GetMapping("/get/user/lint")
-    fun getUserLintRules(
-        @AuthenticationPrincipal userData: Jwt,
-    ): List<SimpleRuleDTO> {
-        try {
-            return ruleService.getLintRules(userData)
-        } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
-        }
-    }
-
     @GetMapping("/get/user/format")
     fun getUserFormatRules(
         @AuthenticationPrincipal userData: Jwt,
@@ -99,17 +88,6 @@ class RuleController(private val ruleService: RuleService) {
         }
     }
 
-    @GetMapping("/user/linting/get")
-    fun getUserLintingRules(
-        @AuthenticationPrincipal userData: Jwt,
-    ): List<RuleDTO> {
-        try {
-            return ruleService.getUserLintingRules(userData)
-        } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
-        }
-    }
-
     @PutMapping("user/update/rules")
     fun updateRules(
         @AuthenticationPrincipal userData: Jwt,
@@ -119,13 +97,6 @@ class RuleController(private val ruleService: RuleService) {
             return ruleService.updateRules(userData, rules)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
-        }
-    }
-
-    private fun getHeaders(): HttpHeaders {
-        return HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_JSON
-            set("X-Correlation-Id", MDC.get(CORRELATION_ID_KEY))
         }
     }
 }

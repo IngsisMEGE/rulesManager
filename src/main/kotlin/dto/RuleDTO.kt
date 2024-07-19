@@ -20,10 +20,8 @@ data class SimpleRuleDTO(
 
 data class FormatRulesDTO(
     val formatRules: List<SimpleRuleDTO>,
-    val lintingRules: List<SimpleRuleDTO>,
 )
 
 data class SCARulesDTO(
     val scaRules: List<SimpleRuleDTO>,
-    val lintingRules: List<SimpleRuleDTO>,
 )
