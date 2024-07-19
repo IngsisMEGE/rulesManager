@@ -25,69 +25,49 @@ class RuleServiceImpl(
 
     override fun getUserRules(userData: Jwt): List<SimpleRuleDTO> {
         logger.debug("Entering getUserRules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findAllUserRules(userEmail)
-            logger.info("Fetched ${rules.size} rules for user")
-            val result = rules.map { ruleToSimpleRuleDTO(it) }
-            logger.debug("Exiting getUserRules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching user rules", e)
-            throw e
-        }
+        val userEmail = userData.claims["email"].toString()
+        val rules = ruleRepository.findAllUserRules(userEmail)
+        logger.info("Fetched ${rules.size} rules for user")
+        val result = rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Exiting getUserRules")
+        return result
     }
 
     override fun getFormatRules(userData: Jwt): List<SimpleRuleDTO> {
         logger.debug("Entering getFormatRules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findUserFormatingRules(userEmail)
-            val result = rules.map { ruleToSimpleRuleDTO(it) }
-            logger.debug("Exiting getFormatRules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching format rules", e)
-            throw e
-        }
+        val userEmail = userData.claims["email"].toString()
+        val rules = ruleRepository.findUserFormatingRules(userEmail)
+        val result = rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Exiting getFormatRules")
+        return result
     }
 
     override fun getSCARules(userData: Jwt): List<SimpleRuleDTO> {
         logger.debug("Entering getSCARules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findUserScaRules(userEmail)
-            val result = rules.map { ruleToSimpleRuleDTO(it) }
-            logger.debug("Exiting getSCARules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching SCA rules", e)
-            throw e
-        }
+        val userEmail = userData.claims["email"].toString()
+        val rules = ruleRepository.findUserScaRules(userEmail)
+        val result = rules.map { ruleToSimpleRuleDTO(it) }
+        logger.debug("Exiting getSCARules")
+        return result
     }
 
     override fun getUserFormatRules(userData: Jwt): List<RuleDTO> {
         logger.debug("Entering getUserFormatRules for user")
-        try {
-            val userEmail = userData.claims["email"].toString()
-            val rules = ruleRepository.findUserFormatingRules(userEmail)
-            val result =
-                rules.map {
-                    RuleDTO(
-                        id = it.id,
-                        name = it.name,
-                        value = it.value,
-                        ruleType = it.type.name,
-                        isActive = it.isActive,
-                        updatedAt = it.updatedAt,
-                    )
-                }
-            logger.debug("Exiting getUserLintingRules")
-            return result
-        } catch (e: Exception) {
-            logger.error("Error fetching user linting rules", e)
-            throw e
-        }
+        val userEmail = userData.claims["email"].toString()
+        val rules = ruleRepository.findUserFormatingRules(userEmail)
+        val result =
+            rules.map {
+                RuleDTO(
+                    id = it.id,
+                    name = it.name,
+                    value = it.value,
+                    ruleType = it.type.name,
+                    isActive = it.isActive,
+                    updatedAt = it.updatedAt,
+                )
+            }
+        logger.debug("Exiting getUserFormatRules")
+        return result
     }
 
     override fun updateRule(
@@ -158,16 +138,27 @@ class RuleServiceImpl(
         logger.debug("Entering editRules for user with rules")
         var runSCA = false
         var runFormat = false
+        val userEmail = userData.claims["email"].toString()
+
         val updatedRules =
             rules.map { ruleDTO ->
                 val ruleToUpdate =
-                    ruleRepository.findById(ruleDTO.id).orElseThrow {
-                        logger.error("Rule not found with id: ${ruleDTO.id}")
-                        NoSuchElementException("Rule not found with id: ${ruleDTO.id}")
+                    ruleRepository.findById(ruleDTO.id).orElseGet {
+                        logger.info("Creating new rule with id: ${ruleDTO.id}")
+                        Rule(
+                            ruleDTO.name,
+                            ruleDTO.isActive,
+                            RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault())),
+                            ruleDTO.value,
+                        ).apply {
+                            id = ruleDTO.id
+                            updatedAt = LocalDateTime.now()
+                        }
                     }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()
+
                 if (ruleToUpdate.type == RuleType.SCA) {
                     runSCA = true
                 }
@@ -195,12 +186,22 @@ class RuleServiceImpl(
         logger.debug("Entering editRulesWithRuleDTO for user with rules")
         var runSCA = false
         var runFormat = false
+        val userEmail = userData.claims["email"].toString()
+
         val updatedRules =
             rules.map { ruleDTO ->
                 val ruleToUpdate =
-                    ruleRepository.findById(ruleDTO.id).orElseThrow {
-                        logger.error("Rule not found with id: ${ruleDTO.id}")
-                        NoSuchElementException("Rule not found with id: ${ruleDTO.id}")
+                    ruleRepository.findById(ruleDTO.id).orElseGet {
+                        logger.info("Creating new rule with id: ${ruleDTO.id}")
+                        Rule(
+                            ruleDTO.name,
+                            ruleDTO.isActive,
+                            RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault())),
+                            ruleDTO.value,
+                        ).apply {
+                            id = ruleDTO.id
+                            updatedAt = LocalDateTime.now()
+                        }
                     }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)

@@ -77,37 +77,51 @@ class RuleServiceTest {
     }
 
     @Test
-    fun updateRuleThrowsExceptionWhenRuleNotFound() {
-        val rules =
+    fun updateRuleCreatesRuleWhenNotFound() {
+        val rulesToUpdate =
             listOf(
-                RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
+                RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
             )
 
-        whenever(ruleRepository.findById(1)).thenReturn(Optional.empty())
+        whenever(ruleRepository.findById(1L)).thenReturn(Optional.empty())
+        whenever(ruleRepository.save(any())).thenAnswer { it.arguments[0] as Rule }
 
-        val exception =
-            org.junit.jupiter.api.assertThrows<NoSuchElementException> {
-                ruleService.updateRule(testJwt, rules)
-            }
+        val updatedRules = ruleService.updateRule(testJwt, rulesToUpdate)
 
-        assertEquals("Rule not found with id: 1", exception.message)
+        verify(ruleRepository).save(ruleCaptor.capture())
+        val savedRule = ruleCaptor.value
+        assertEquals("Updated Rule 1", savedRule.name)
+        assertEquals("New Value 1", savedRule.value)
+        assertEquals(RuleType.SCA, savedRule.type)
+        assertTrue(savedRule.isActive)
+
+        assertEquals(1, updatedRules.size)
+        assertEquals("Updated Rule 1", updatedRules[0].name)
+        assertEquals("New Value 1", updatedRules[0].value)
     }
 
     @Test
-    fun updateRuleOnUseThrowsExceptionWhenRuleNotFound() {
-        val rules =
+    fun updateRuleOnUseCreatesRuleWhenNotFound() {
+        val rulesToUpdate =
             listOf(
-                RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
+                RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
             )
 
-        whenever(ruleRepository.findById(1)).thenReturn(Optional.empty())
+        whenever(ruleRepository.findById(1L)).thenReturn(Optional.empty())
+        whenever(ruleRepository.save(any())).thenAnswer { it.arguments[0] as Rule }
 
-        val exception =
-            org.junit.jupiter.api.assertThrows<NoSuchElementException> {
-                ruleService.updateRuleOnUse(testJwt, rules)
-            }
+        val updatedRules = ruleService.updateRuleOnUse(testJwt, rulesToUpdate)
 
-        assertEquals("Rule not found with id: 1", exception.message)
+        verify(ruleRepository).save(ruleCaptor.capture())
+        val savedRule = ruleCaptor.value
+        assertEquals("Updated Rule 1", savedRule.name)
+        assertEquals("New Value 1", savedRule.value)
+        assertEquals(RuleType.SCA, savedRule.type)
+        assertTrue(savedRule.isActive)
+
+        assertEquals(1, updatedRules.size)
+        assertEquals("Updated Rule 1", updatedRules[0].name)
+        assertEquals("New Value 1", updatedRules[0].value)
     }
 
     @Test
@@ -244,15 +258,6 @@ class RuleServiceTest {
         return SimpleRuleDTO(
             name = rule.name,
             value = rule.value,
-        )
-    }
-
-    private fun convertRuleDTOToRule(ruleDTO: RuleDTO): Rule {
-        return Rule(
-            name = ruleDTO.name,
-            isActive = ruleDTO.isActive,
-            type = RuleType.valueOf(ruleDTO.ruleType),
-            value = ruleDTO.value,
         )
     }
 }
