@@ -164,10 +164,11 @@ class RuleServiceTest {
 
     @Test
     fun updateRuleOnUseOnlyUpdatesIsActiveCorrectly() {
-        val rulesToUpdate = listOf(
-            RuleDTO(1L, "Rule 1", "Value 1", "SCA", false, LocalDateTime.now()),
-            RuleDTO(2L, "Rule 2", "Value 2", "FORMATING", true, LocalDateTime.now())
-        )
+        val rulesToUpdate =
+            listOf(
+                RuleDTO(1L, "Rule 1", "Value 1", "SCA", false, LocalDateTime.now()),
+                RuleDTO(2L, "Rule 2", "Value 2", "FORMATING", true, LocalDateTime.now()),
+            )
         val existingRule1 = Rule("Rule 1", true, RuleType.SCA, "Value 1").apply { id = 1L }
         val existingRule2 = Rule("Rule 2", true, RuleType.FORMATING, "Value 2").apply { id = 2L }
 
@@ -185,10 +186,11 @@ class RuleServiceTest {
 
     @Test
     fun updateRulesUpdatesRulesCorrectly() {
-        val rulesToUpdate = listOf(
-            RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
-            RuleDTO(2L, "Updated Rule 2", "New Value 2", "FORMATING", true, LocalDateTime.now())
-        )
+        val rulesToUpdate =
+            listOf(
+                RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
+                RuleDTO(2L, "Updated Rule 2", "New Value 2", "FORMATING", true, LocalDateTime.now()),
+            )
         val existingRule1 = Rule("Rule 1", true, RuleType.SCA, "Value 1").apply { id = 1L }
         val existingRule2 = Rule("Rule 2", true, RuleType.FORMATING, "Value 2").apply { id = 2L }
 
@@ -211,10 +213,11 @@ class RuleServiceTest {
 
     @Test
     fun updateRuleUpdatesRulesCorrectlyWithSimpleRule() {
-        val rulesToUpdate = listOf(
-            RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
-            RuleDTO(2L, "Updated Rule 2", "New Value 2", "FORMATING", true, LocalDateTime.now())
-        )
+        val rulesToUpdate =
+            listOf(
+                RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
+                RuleDTO(2L, "Updated Rule 2", "New Value 2", "FORMATING", true, LocalDateTime.now()),
+            )
         val existingRule1 = Rule("Rule 1", true, RuleType.SCA, "Value 1").apply { id = 1L }
         val existingRule2 = Rule("Rule 2", true, RuleType.FORMATING, "Value 2").apply { id = 2L }
 
@@ -228,7 +231,9 @@ class RuleServiceTest {
         verify(ruleRepository, times(rulesToUpdate.size)).save(ruleCaptor.capture())
         val savedRules = ruleCaptor.allValues
         assertTrue(savedRules.any { it.id == 1L && it.name == "Updated Rule 1" && it.value == "New Value 1" && it.type == RuleType.SCA })
-        assertTrue(savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.value == "New Value 2" && it.type == RuleType.FORMATING })
+        assertTrue(
+            savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.value == "New Value 2" && it.type == RuleType.FORMATING },
+        )
 
         assertEquals(rulesToUpdate.size, updatedSimpleRules.size)
         assertTrue(updatedSimpleRules.any { it.name == "Updated Rule 1" && it.value == "New Value 1" })
