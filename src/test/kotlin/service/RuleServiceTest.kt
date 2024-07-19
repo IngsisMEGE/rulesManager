@@ -8,7 +8,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import org.springframework.security.oauth2.jwt.Jwt
@@ -16,16 +18,20 @@ import printscript.rulesManager.dto.RuleDTO
 import printscript.rulesManager.dto.SimpleRuleDTO
 import printscript.rulesManager.model.Rule
 import printscript.rulesManager.model.RuleType
+import printscript.rulesManager.repository.CommonRuleRepository
 import printscript.rulesManager.repository.RuleRepository
 import printscript.rulesManager.service.SnippetManagerService
 import printscript.rulesManager.service.implementation.RuleServiceImpl
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class RuleServiceTest {
     @Mock
     private lateinit var ruleRepository: RuleRepository
+
+    @Mock
+    private lateinit var commonRuleRepository: CommonRuleRepository
 
     @Mock
     private lateinit var snippetManagerService: SnippetManagerService
@@ -60,8 +66,8 @@ class RuleServiceTest {
 
         verify(ruleRepository, times(2)).save(ruleCaptor.capture())
         val savedRules = ruleCaptor.allValues
-        assertTrue(savedRules.any { it.name == "Updated Rule 1" && it.value == "New Value 1" })
-        assertTrue(savedRules.any { it.name == "Updated Rule 2" && it.value == "New Value 2" })
+        assertTrue(savedRules.any { it.name == "Updated Rule 1" && it.content == "New Value 1" })
+        assertTrue(savedRules.any { it.name == "Updated Rule 2" && it.content == "New Value 2" })
 
         assertEquals(2, updatedRules.size)
     }
@@ -91,7 +97,7 @@ class RuleServiceTest {
         verify(ruleRepository).save(ruleCaptor.capture())
         val savedRule = ruleCaptor.value
         assertEquals("Updated Rule 1", savedRule.name)
-        assertEquals("New Value 1", savedRule.value)
+        assertEquals("New Value 1", savedRule.content)
         assertEquals(RuleType.SCA, savedRule.type)
         assertTrue(savedRule.isActive)
 
@@ -115,7 +121,7 @@ class RuleServiceTest {
         verify(ruleRepository).save(ruleCaptor.capture())
         val savedRule = ruleCaptor.value
         assertEquals("Updated Rule 1", savedRule.name)
-        assertEquals("New Value 1", savedRule.value)
+        assertEquals("New Value 1", savedRule.content)
         assertEquals(RuleType.SCA, savedRule.type)
         assertTrue(savedRule.isActive)
 
@@ -167,7 +173,7 @@ class RuleServiceTest {
                 RuleDTO(
                     id = it.id,
                     name = it.name,
-                    value = it.value,
+                    value = it.content,
                     ruleType = it.type.name,
                     isActive = it.isActive,
                     updatedAt = it.updatedAt,
@@ -217,8 +223,8 @@ class RuleServiceTest {
         verify(ruleRepository, times(rulesToUpdate.size)).findById(any())
         verify(ruleRepository, times(rulesToUpdate.size)).save(ruleCaptor.capture())
         val savedRules = ruleCaptor.allValues
-        assertTrue(savedRules.any { it.id == 1L && it.name == "Updated Rule 1" && it.value == "New Value 1" })
-        assertTrue(savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.value == "New Value 2" })
+        assertTrue(savedRules.any { it.id == 1L && it.name == "Updated Rule 1" && it.content == "New Value 1" })
+        assertTrue(savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.content == "New Value 2" })
 
         assertEquals(rulesToUpdate.size, updatedRules.size)
         assertTrue(updatedRules.any { it.name == "Updated Rule 1" && it.value == "New Value 1" })
@@ -244,9 +250,9 @@ class RuleServiceTest {
         verify(ruleRepository, times(rulesToUpdate.size)).findById(any())
         verify(ruleRepository, times(rulesToUpdate.size)).save(ruleCaptor.capture())
         val savedRules = ruleCaptor.allValues
-        assertTrue(savedRules.any { it.id == 1L && it.name == "Updated Rule 1" && it.value == "New Value 1" && it.type == RuleType.SCA })
+        assertTrue(savedRules.any { it.id == 1L && it.name == "Updated Rule 1" && it.content == "New Value 1" && it.type == RuleType.SCA })
         assertTrue(
-            savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.value == "New Value 2" && it.type == RuleType.FORMATING },
+            savedRules.any { it.id == 2L && it.name == "Updated Rule 2" && it.content == "New Value 2" && it.type == RuleType.FORMATING },
         )
 
         assertEquals(rulesToUpdate.size, updatedSimpleRules.size)
@@ -257,7 +263,7 @@ class RuleServiceTest {
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
             name = rule.name,
-            value = rule.value,
+            value = rule.content,
         )
     }
 }

@@ -8,8 +8,10 @@ import printscript.rulesManager.dto.FormatRulesDTO
 import printscript.rulesManager.dto.RuleDTO
 import printscript.rulesManager.dto.SCARulesDTO
 import printscript.rulesManager.dto.SimpleRuleDTO
+import printscript.rulesManager.model.CommonRule
 import printscript.rulesManager.model.Rule
 import printscript.rulesManager.model.RuleType
+import printscript.rulesManager.repository.CommonRuleRepository
 import printscript.rulesManager.repository.RuleRepository
 import printscript.rulesManager.service.RuleService
 import printscript.rulesManager.service.SnippetManagerService
@@ -20,6 +22,7 @@ import java.util.Locale
 class RuleServiceImpl(
     private val ruleRepository: RuleRepository,
     private val snippetManagerService: SnippetManagerService,
+    private val commonRuleRepository: CommonRuleRepository,
 ) : RuleService {
     private val logger: Logger = LoggerFactory.getLogger(RuleServiceImpl::class.java)
 
@@ -30,6 +33,9 @@ class RuleServiceImpl(
         logger.info("Fetched ${rules.size} rules for user")
         val result = rules.map { ruleToSimpleRuleDTO(it) }
         logger.debug("Exiting getUserRules")
+        if (result.isEmpty()) {
+            return commonRuleRepository.findAll().map { commmonRuleToSimpleRuleDTO(it) }
+        }
         return result
     }
 
@@ -39,6 +45,10 @@ class RuleServiceImpl(
         val rules = ruleRepository.findUserFormatingRules(userEmail)
         val result = rules.map { ruleToSimpleRuleDTO(it) }
         logger.debug("Exiting getFormatRules")
+        if (result.isEmpty()) {
+            val commonRules = commonRuleRepository.findAll()
+            return commonRules.filter { it.type == RuleType.FORMATING }.map { commmonRuleToSimpleRuleDTO(it) }
+        }
         return result
     }
 
@@ -48,6 +58,10 @@ class RuleServiceImpl(
         val rules = ruleRepository.findUserScaRules(userEmail)
         val result = rules.map { ruleToSimpleRuleDTO(it) }
         logger.debug("Exiting getSCARules")
+        if (result.isEmpty()) {
+            val commonRules = commonRuleRepository.findAll()
+            return commonRules.filter { it.type == RuleType.SCA }.map { commmonRuleToSimpleRuleDTO(it) }
+        }
         return result
     }
 
@@ -60,13 +74,27 @@ class RuleServiceImpl(
                 RuleDTO(
                     id = it.id,
                     name = it.name,
-                    value = it.value,
+                    value = it.content,
                     ruleType = it.type.name,
                     isActive = it.isActive,
                     updatedAt = it.updatedAt,
                 )
             }
         logger.debug("Exiting getUserFormatRules")
+        if (result.isEmpty()) {
+            val commonRules = commonRuleRepository.findAll()
+            return commonRules.filter { it.type == RuleType.FORMATING }
+                .map {
+                    RuleDTO(
+                        id = it.id,
+                        name = it.name,
+                        value = it.ruleValue,
+                        ruleType = it.type.name,
+                        isActive = it.isActive,
+                        updatedAt = it.updatedAt,
+                    )
+                }
+        }
         return result
     }
 
@@ -80,7 +108,7 @@ class RuleServiceImpl(
                 editRules(userData, rules) { ruleDTO, ruleToUpdate ->
                     val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
                     ruleToUpdate.name = ruleDTO.name
-                    ruleToUpdate.value = ruleDTO.value
+                    ruleToUpdate.content = ruleDTO.value
                     ruleToUpdate.type = ruleType
                 }
             logger.debug("Exiting updateRule")
@@ -119,7 +147,7 @@ class RuleServiceImpl(
                 editRulesWithRuleDTO(userData, rules) { ruleDTO, ruleToUpdate ->
                     val ruleType = RuleType.valueOf(ruleDTO.ruleType.uppercase(Locale.getDefault()))
                     ruleToUpdate.name = ruleDTO.name
-                    ruleToUpdate.value = ruleDTO.value
+                    ruleToUpdate.content = ruleDTO.value
                     ruleToUpdate.type = ruleType
                 }
             logger.debug("Exiting updateRules")
@@ -138,7 +166,6 @@ class RuleServiceImpl(
         logger.debug("Entering editRules for user with rules")
         var runSCA = false
         var runFormat = false
-        val userEmail = userData.claims["email"].toString()
 
         val updatedRules =
             rules.map { ruleDTO ->
@@ -186,7 +213,6 @@ class RuleServiceImpl(
         logger.debug("Entering editRulesWithRuleDTO for user with rules")
         var runSCA = false
         var runFormat = false
-        val userEmail = userData.claims["email"].toString()
 
         val updatedRules =
             rules.map { ruleDTO ->
@@ -219,7 +245,7 @@ class RuleServiceImpl(
                 RuleDTO(
                     id = updatedRule.id,
                     name = updatedRule.name,
-                    value = updatedRule.value,
+                    value = updatedRule.content,
                     ruleType = updatedRule.type.name,
                     isActive = updatedRule.isActive,
                     updatedAt = updatedRule.updatedAt,
@@ -236,7 +262,7 @@ class RuleServiceImpl(
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
             name = rule.name,
-            value = rule.value,
+            value = rule.content,
         )
     }
 
@@ -250,6 +276,13 @@ class RuleServiceImpl(
             logger.error("Error updating status SCA", e)
             throw e
         }
+    }
+
+    private fun commmonRuleToSimpleRuleDTO(rule: CommonRule): SimpleRuleDTO {
+        return SimpleRuleDTO(
+            name = rule.name,
+            value = rule.ruleValue,
+        )
     }
 
     private fun updateStatusFormat(userData: Jwt) {
