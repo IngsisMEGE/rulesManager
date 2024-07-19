@@ -27,7 +27,7 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
         rules: SCARulesDTO,
         userData: Jwt,
     ): Mono<String> {
-        logger.debug("Entering updateSnippetsSCA for user")
+        logger.info("Entering updateSnippetsSCA for user")
         val headers =
             getHeader().apply {
                 set("Authorization", "Bearer ${userData.tokenValue}")
@@ -59,14 +59,14 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
             .bodyToMono<String>()
             .doOnSuccess { logger.info("Successfully updated SCA snippets for user") }
             .doOnError { e -> logger.error("Error updating SCA snippets for user", e) }
-            .doFinally { logger.debug("Exiting updateSnippetsSCA for user") }
+            .doFinally { logger.info("Exiting updateSnippetsSCA for user") }
     }
 
     override fun updateSnippetFormat(
         rules: FormatRulesDTO,
         userData: Jwt,
     ): Mono<String> {
-        logger.debug("Entering updateSnippetFormat for user")
+        logger.info("Entering updateSnippetFormat for user")
         val headers =
             getHeader().apply {
                 set("Authorization", "Bearer ${userData.tokenValue}")
@@ -98,7 +98,7 @@ class SnippetManagerServiceImpl(private val webClient: WebClient, private val do
             .bodyToMono<String>()
             .doOnSuccess { logger.info("Successfully updated format snippets for user") }
             .doOnError { e -> logger.error("Error updating format snippets for user", e) }
-            .doFinally { logger.debug("Exiting updateSnippetFormat for user") }
+            .doFinally { logger.info("Exiting updateSnippetFormat for user") }
     }
 
     private fun getHeader(): HttpHeaders {
