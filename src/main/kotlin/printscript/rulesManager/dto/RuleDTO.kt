@@ -18,6 +18,13 @@ data class SimpleRuleDTO(
     val value: String,
 )
 
+data class CommonRuleDTO(
+    val name: String,
+    val value: String,
+    val ruleType: String,
+    val isActive: Boolean,
+)
+
 data class FormatRulesDTO(
     val formatRules: List<SimpleRuleDTO>,
 )

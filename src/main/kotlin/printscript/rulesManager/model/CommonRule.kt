@@ -7,26 +7,22 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "rules")
-class Rule(
+@Table(name = "common_rules")
+class CommonRule(
     @Column
     var name: String = "",
     @Column
-    var isActive: Boolean = false,
+    var isActive: Boolean = true,
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column
     var type: RuleType = RuleType.FORMATING,
-    @Column(nullable = true)
+    @Column
     var value: String = "",
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
-
-    @OneToMany(mappedBy = "rule")
-    var ruleUsers: List<RuleUser> = emptyList()
 }

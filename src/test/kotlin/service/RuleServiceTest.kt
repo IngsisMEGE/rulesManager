@@ -16,6 +16,7 @@ import printscript.rulesManager.dto.RuleDTO
 import printscript.rulesManager.dto.SimpleRuleDTO
 import printscript.rulesManager.model.Rule
 import printscript.rulesManager.model.RuleType
+import printscript.rulesManager.repository.CommonRuleRepository
 import printscript.rulesManager.repository.RuleRepository
 import printscript.rulesManager.service.SnippetManagerService
 import printscript.rulesManager.service.implementation.RuleServiceImpl
@@ -26,6 +27,9 @@ import java.util.*
 class RuleServiceTest {
     @Mock
     private lateinit var ruleRepository: RuleRepository
+
+    @Mock
+    private lateinit var commonRuleRepository: CommonRuleRepository
 
     @Mock
     private lateinit var snippetManagerService: SnippetManagerService
