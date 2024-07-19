@@ -109,6 +109,55 @@ class RuleServiceTest {
         assertEquals("Rule not found with id: 1", exception.message)
     }
 
+    @Test
+    fun getUserRulesReturnsCorrectRulesForUser() {
+        val expectedRules = listOf(Rule("rule1", true, RuleType.SCA, "value1"))
+        whenever(ruleRepository.findAllUserRules("test@test.com")).thenReturn(expectedRules)
+
+        val actualRules = ruleService.getUserRules(testJwt)
+
+        assertEquals(expectedRules.map { ruleToSimpleRuleDTO(it) }, actualRules)
+    }
+
+    @Test
+    fun getSCARulesReturnsCorrectSCARulesForUser() {
+        val expectedSCARules = listOf(Rule("SCA Rule", true, RuleType.SCA, "SCA Value"))
+        whenever(ruleRepository.findUserScaRules("test@test.com")).thenReturn(expectedSCARules)
+
+        val actualSCARules = ruleService.getSCARules(testJwt)
+
+        assertEquals(expectedSCARules.map { ruleToSimpleRuleDTO(it) }, actualSCARules)
+    }
+
+    @Test
+    fun getUserFormatRulesReturnsFormatRulesForUser() {
+        val userEmail = "test@test.com"
+        val expectedRules = listOf(
+            Rule("Format Rule 1", true, RuleType.FORMATING, "Value 1").apply {
+                id = 1L; updatedAt = LocalDateTime.now()
+            },
+            Rule("Format Rule 2", true, RuleType.FORMATING, "Value 2").apply {
+                id = 2L; updatedAt = LocalDateTime.now()
+            }
+        )
+        whenever(ruleRepository.findUserFormatingRules(userEmail)).thenReturn(expectedRules)
+
+        val actualRules = ruleService.getUserFormatRules(testJwt)
+
+        val expectedDTOs = expectedRules.map {
+            RuleDTO(
+                id = it.id,
+                name = it.name,
+                value = it.value,
+                ruleType = it.type.name,
+                isActive = it.isActive,
+                updatedAt = it.updatedAt
+            )
+        }
+        assertEquals(expectedDTOs, actualRules)
+    }
+
+
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
             name = rule.name,
