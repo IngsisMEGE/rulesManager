@@ -19,10 +19,11 @@ class CommonRule(
     @Enumerated(EnumType.STRING)
     @Column
     var type: RuleType = RuleType.FORMATING,
-    @Column
-    var value: String = "",
+    @Column(name = "rule_value")
+    var ruleValue: String = "",
 ) : BaseEntity() {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, unique = true)
     var id: Long = 0
 }

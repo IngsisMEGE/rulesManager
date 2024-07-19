@@ -88,7 +88,7 @@ class RuleServiceImpl(
                     RuleDTO(
                         id = it.id,
                         name = it.name,
-                        value = it.value,
+                        value = it.ruleValue,
                         ruleType = it.type.name,
                         isActive = it.isActive,
                         updatedAt = it.updatedAt,
@@ -281,7 +281,7 @@ class RuleServiceImpl(
     private fun commmonRuleToSimpleRuleDTO(rule: CommonRule): SimpleRuleDTO {
         return SimpleRuleDTO(
             name = rule.name,
-            value = rule.value,
+            value = rule.ruleValue,
         )
     }
 
