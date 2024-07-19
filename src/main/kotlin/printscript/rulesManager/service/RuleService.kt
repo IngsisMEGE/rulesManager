@@ -13,6 +13,8 @@ interface RuleService {
 
     fun getUserFormatRules(userData: Jwt): List<RuleDTO>
 
+    fun getUserSCARules(userData: Jwt): List<RuleDTO>
+
     fun updateRule(
         userData: Jwt,
         rules: List<RuleDTO>,
