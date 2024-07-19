@@ -1,8 +1,8 @@
-package service
+package printscript.rulesManager.service
 
-import dto.FormatRulesDTO
-import dto.SCARulesDTO
 import org.springframework.security.oauth2.jwt.Jwt
+import printscript.rulesManager.dto.FormatRulesDTO
+import printscript.rulesManager.dto.SCARulesDTO
 import reactor.core.publisher.Mono
 
 interface SnippetManagerService {

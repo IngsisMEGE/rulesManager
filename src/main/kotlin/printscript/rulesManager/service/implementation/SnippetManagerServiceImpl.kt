@@ -1,10 +1,6 @@
-package service.implementation
+package printscript.rulesManager.service.implementation
 
-import dto.FormatRulesDTO
-import dto.SCARulesDTO
-import exceptions.NotFoundException
 import io.github.cdimascio.dotenv.Dotenv
-import logs.CorrIdFilter.Companion.CORRELATION_ID_KEY
 import org.apache.coyote.BadRequestException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,8 +11,12 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import printscript.rulesManager.dto.FormatRulesDTO
+import printscript.rulesManager.dto.SCARulesDTO
+import printscript.rulesManager.exceptions.NotFoundException
+import printscript.rulesManager.logs.CorrIdFilter.Companion.CORRELATION_ID_KEY
+import printscript.rulesManager.service.SnippetManagerService
 import reactor.core.publisher.Mono
-import service.SnippetManagerService
 
 @Service
 class SnippetManagerServiceImpl(private val webClient: WebClient, private val dotenv: Dotenv) : SnippetManagerService {

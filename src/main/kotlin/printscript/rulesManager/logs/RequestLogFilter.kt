@@ -1,4 +1,4 @@
-package logs
+package printscript.rulesManager.logs
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

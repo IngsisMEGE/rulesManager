@@ -1,18 +1,18 @@
-package service.implementation
+package printscript.rulesManager.service.implementation
 
-import dto.FormatRulesDTO
-import dto.RuleDTO
-import dto.SCARulesDTO
-import dto.SimpleRuleDTO
-import model.Rule
-import model.RuleType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
-import repository.RuleRepository
-import service.RuleService
-import service.SnippetManagerService
+import printscript.rulesManager.dto.FormatRulesDTO
+import printscript.rulesManager.dto.RuleDTO
+import printscript.rulesManager.dto.SCARulesDTO
+import printscript.rulesManager.dto.SimpleRuleDTO
+import printscript.rulesManager.model.Rule
+import printscript.rulesManager.model.RuleType
+import printscript.rulesManager.repository.RuleRepository
+import printscript.rulesManager.service.RuleService
+import printscript.rulesManager.service.SnippetManagerService
 import java.time.LocalDateTime
 import java.util.Locale
 

@@ -1,4 +1,4 @@
-package model
+package printscript.rulesManager.model
 
 enum class RuleType {
     SCA,
