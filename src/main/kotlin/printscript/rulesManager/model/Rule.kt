@@ -10,7 +10,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "rules")
-data class Rule(
+class Rule(
     @Column
     var name: String,
     @Column
