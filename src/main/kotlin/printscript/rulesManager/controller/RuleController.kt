@@ -14,7 +14,7 @@ import printscript.rulesManager.dto.SimpleRuleDTO
 import printscript.rulesManager.service.RuleService
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/rules")
 class RuleController(private val ruleService: RuleService) {
     @GetMapping("/get/user/all")
     fun getUserRules(
