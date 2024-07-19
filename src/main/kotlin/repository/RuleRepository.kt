@@ -14,7 +14,6 @@ interface RuleRepository : JpaRepository<Rule, Long> {
         @Param("userId") userEmail: String,
     ): List<Rule>
 
-
     @Query("SELECT rule FROM Rule rule JOIN rule.ruleUsers ru WHERE ru.userEmail = :userId AND rule.type = :type")
     fun findUserFormatingRules(
         @Param("userId") userEmail: String,

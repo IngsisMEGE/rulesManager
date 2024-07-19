@@ -38,7 +38,6 @@ class RuleServiceImpl(
         }
     }
 
-
     override fun getFormatRules(userData: Jwt): List<SimpleRuleDTO> {
         logger.debug("Entering getFormatRules for user")
         try {
@@ -164,7 +163,7 @@ class RuleServiceImpl(
                 val ruleToUpdate =
                     ruleRepository.findById(ruleDTO.id).orElseThrow {
                         logger.error("Rule not found with id: ${ruleDTO.id}")
-                        throw Exception("Rule not found")
+                        NoSuchElementException("Rule not found with id: ${ruleDTO.id}")
                     }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
@@ -201,7 +200,7 @@ class RuleServiceImpl(
                 val ruleToUpdate =
                     ruleRepository.findById(ruleDTO.id).orElseThrow {
                         logger.error("Rule not found with id: ${ruleDTO.id}")
-                        throw Exception("Rule not found")
+                        NoSuchElementException("Rule not found with id: ${ruleDTO.id}")
                     }
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)

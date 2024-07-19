@@ -1,12 +1,8 @@
 package controller
 
-import com.newrelic.agent.deps.org.slf4j.MDC
 import dto.RuleDTO
 import dto.SimpleRuleDTO
-import logs.CorrIdFilter.Companion.CORRELATION_ID_KEY
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.GetMapping

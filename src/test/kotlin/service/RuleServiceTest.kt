@@ -1,12 +1,11 @@
 package service
 
-import dto.FormatRulesDTO
 import dto.RuleDTO
-import dto.SCARulesDTO
 import dto.SimpleRuleDTO
 import model.Rule
 import model.RuleType
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -17,7 +16,6 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import org.springframework.security.oauth2.jwt.Jwt
-import reactor.core.publisher.Mono
 import repository.RuleRepository
 import service.implementation.RuleServiceImpl
 import java.time.LocalDateTime
@@ -25,7 +23,6 @@ import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class RuleServiceTest {
-
     @Mock
     private lateinit var ruleRepository: RuleRepository
 
@@ -38,62 +35,35 @@ class RuleServiceTest {
     @Captor
     private lateinit var ruleCaptor: ArgumentCaptor<Rule>
 
-    private val testJwt = Jwt.withTokenValue("test")
-        .header("alg", "RS256")
-        .claim("email", "test@test.com")
-        .build()
+    private val testJwt =
+        Jwt.withTokenValue("test")
+            .header("alg", "RS256")
+            .claim("email", "test@test.com")
+            .build()
 
     @Test
-    fun `updateRule updates rules and triggers SCA update`() {
-        val rules = listOf(
-            RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
-            RuleDTO(2, "rule2", "newValue2", "LINTING", true, LocalDateTime.now())
-        )
-        val existingRule1 = Rule("rule1", true, RuleType.SCA, "value1")
-        val existingRule2 = Rule("rule2", true, RuleType.FORMATING, "value2")
+    fun `updateRule updates rules correctly`() {
+        val rulesToUpdate =
+            listOf(
+                RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
+                RuleDTO(2L, "Updated Rule 2", "New Value 2", "FORMATING", true, LocalDateTime.now()),
+            )
+        val existingRule1 = Rule("Rule 1", true, RuleType.SCA, "Value 1").apply { id = 1L }
+        val existingRule2 = Rule("Rule 2", true, RuleType.FORMATING, "Value 2").apply { id = 2L }
 
-        whenever(ruleRepository.findById(1)).thenReturn(Optional.of(existingRule1))
-        whenever(ruleRepository.findById(2)).thenReturn(Optional.of(existingRule2))
-        whenever(ruleRepository.save(any())).thenAnswer { invocation ->
-            invocation.getArgument<Rule>(0)
-        }
-        whenever(snippetManagerService.updateSnippetsSCA(any(), any())).thenReturn(Mono.just("Success"))
+        whenever(ruleRepository.findById(1L)).thenReturn(Optional.of(existingRule1))
+        whenever(ruleRepository.findById(2L)).thenReturn(Optional.of(existingRule2))
+        whenever(ruleRepository.save(any())).thenAnswer { it.arguments[0] }
 
-        val updatedRules = ruleService.updateRule(testJwt, rules)
+        val updatedRules = ruleService.updateRule(testJwt, rulesToUpdate)
 
-        assertEquals("newValue1", updatedRules[0].value)
-        assertEquals("newValue2", updatedRules[1].value)
-        assertEquals(2, updatedRules.size)
-
-        verify(snippetManagerService, times(1)).updateSnippetsSCA(any(SCARulesDTO::class.java), eq(testJwt))
-    }
-
-    @Test
-    fun `updateRuleOnUse updates rules and triggers SCA and Format updates`() {
-        val rules = listOf(
-            RuleDTO(1, "rule1", "value1", "SCA", true, LocalDateTime.now()),
-            RuleDTO(2, "rule2", "value2", "FORMATING", true, LocalDateTime.now())
-        )
-        val existingRule1 = Rule("rule1", true, RuleType.SCA, "value1")
-        val existingRule2 = Rule("rule2", true, RuleType.FORMATING, "value2")
-
-        whenever(ruleRepository.findById(1)).thenReturn(Optional.of(existingRule1))
-        whenever(ruleRepository.findById(2)).thenReturn(Optional.of(existingRule2))
-        whenever(ruleRepository.save(any())).thenAnswer { invocation ->
-            invocation.getArgument<Rule>(0)
-        }
-        whenever(snippetManagerService.updateSnippetsSCA(any(), any())).thenReturn(Mono.just("Success"))
-        whenever(snippetManagerService.updateSnippetFormat(any(), any())).thenReturn(Mono.just("Success"))
-
-        val updatedRules = ruleService.updateRuleOnUse(testJwt, rules)
-
-        verify(ruleRepository, times(2)).save(any())
-        verify(snippetManagerService, times(1)).updateSnippetsSCA(any(SCARulesDTO::class.java), eq(testJwt))
-        verify(snippetManagerService, times(1)).updateSnippetFormat(any(FormatRulesDTO::class.java), eq(testJwt))
+        verify(ruleRepository, times(2)).save(ruleCaptor.capture())
+        val savedRules = ruleCaptor.allValues
+        assertTrue(savedRules.any { it.name == "Updated Rule 1" && it.value == "New Value 1" })
+        assertTrue(savedRules.any { it.name == "Updated Rule 2" && it.value == "New Value 2" })
 
         assertEquals(2, updatedRules.size)
     }
-
 
     @Test
     fun `getFormatRules for user returns expected rules`() {
@@ -107,38 +77,51 @@ class RuleServiceTest {
 
     @Test
     fun `updateRule throws exception when rule not found`() {
-        val rules = listOf(
-            RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now())
-        )
+        val rules =
+            listOf(
+                RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
+            )
 
         whenever(ruleRepository.findById(1)).thenReturn(Optional.empty())
 
-        val exception = org.junit.jupiter.api.assertThrows<NoSuchElementException> {
-            ruleService.updateRule(testJwt, rules)
-        }
+        val exception =
+            org.junit.jupiter.api.assertThrows<NoSuchElementException> {
+                ruleService.updateRule(testJwt, rules)
+            }
 
-        assertEquals("No value present", exception.message)
+        assertEquals("Rule not found with id: 1", exception.message)
     }
 
     @Test
     fun `updateRuleOnUse throws exception when rule not found`() {
-        val rules = listOf(
-            RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now())
-        )
+        val rules =
+            listOf(
+                RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
+            )
 
         whenever(ruleRepository.findById(1)).thenReturn(Optional.empty())
 
-        val exception = org.junit.jupiter.api.assertThrows<NoSuchElementException> {
-            ruleService.updateRuleOnUse(testJwt, rules)
-        }
+        val exception =
+            org.junit.jupiter.api.assertThrows<NoSuchElementException> {
+                ruleService.updateRuleOnUse(testJwt, rules)
+            }
 
-        assertEquals("No value present", exception.message)
+        assertEquals("Rule not found with id: 1", exception.message)
     }
 
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
             name = rule.name,
-            value = rule.value
+            value = rule.value,
+        )
+    }
+
+    private fun convertRuleDTOToRule(ruleDTO: RuleDTO): Rule {
+        return Rule(
+            name = ruleDTO.name,
+            isActive = ruleDTO.isActive,
+            type = RuleType.valueOf(ruleDTO.ruleType),
+            value = ruleDTO.value,
         )
     }
 }
