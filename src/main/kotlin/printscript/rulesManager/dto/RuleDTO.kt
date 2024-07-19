@@ -1,4 +1,4 @@
-package dto
+package printscript.rulesManager.dto
 
 import org.springframework.data.annotation.ReadOnlyProperty
 import java.time.LocalDateTime

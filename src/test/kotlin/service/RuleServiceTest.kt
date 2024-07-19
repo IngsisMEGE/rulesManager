@@ -1,9 +1,5 @@
 package service
 
-import dto.RuleDTO
-import dto.SimpleRuleDTO
-import model.Rule
-import model.RuleType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -16,8 +12,13 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import org.springframework.security.oauth2.jwt.Jwt
-import repository.RuleRepository
-import service.implementation.RuleServiceImpl
+import printscript.rulesManager.dto.RuleDTO
+import printscript.rulesManager.dto.SimpleRuleDTO
+import printscript.rulesManager.model.Rule
+import printscript.rulesManager.model.RuleType
+import printscript.rulesManager.repository.RuleRepository
+import printscript.rulesManager.service.SnippetManagerService
+import printscript.rulesManager.service.implementation.RuleServiceImpl
 import java.time.LocalDateTime
 import java.util.*
 

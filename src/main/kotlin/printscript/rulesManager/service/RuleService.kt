@@ -1,8 +1,8 @@
-package service
+package printscript.rulesManager.service
 
-import dto.RuleDTO
-import dto.SimpleRuleDTO
 import org.springframework.security.oauth2.jwt.Jwt
+import printscript.rulesManager.dto.RuleDTO
+import printscript.rulesManager.dto.SimpleRuleDTO
 
 interface RuleService {
     fun getUserRules(userData: Jwt): List<SimpleRuleDTO>

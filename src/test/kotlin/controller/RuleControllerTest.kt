@@ -1,7 +1,5 @@
 package controller
 
-import dto.RuleDTO
-import dto.SimpleRuleDTO
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -11,7 +9,10 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.server.ResponseStatusException
-import service.RuleService
+import printscript.rulesManager.controller.RuleController
+import printscript.rulesManager.dto.RuleDTO
+import printscript.rulesManager.dto.SimpleRuleDTO
+import printscript.rulesManager.service.RuleService
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
