@@ -132,31 +132,34 @@ class RuleServiceTest {
     @Test
     fun getUserFormatRulesReturnsFormatRulesForUser() {
         val userEmail = "test@test.com"
-        val expectedRules = listOf(
-            Rule("Format Rule 1", true, RuleType.FORMATING, "Value 1").apply {
-                id = 1L; updatedAt = LocalDateTime.now()
-            },
-            Rule("Format Rule 2", true, RuleType.FORMATING, "Value 2").apply {
-                id = 2L; updatedAt = LocalDateTime.now()
-            }
-        )
+        val expectedRules =
+            listOf(
+                Rule("Format Rule 1", true, RuleType.FORMATING, "Value 1").apply {
+                    id = 1L
+                    updatedAt = LocalDateTime.now()
+                },
+                Rule("Format Rule 2", true, RuleType.FORMATING, "Value 2").apply {
+                    id = 2L
+                    updatedAt = LocalDateTime.now()
+                },
+            )
         whenever(ruleRepository.findUserFormatingRules(userEmail)).thenReturn(expectedRules)
 
         val actualRules = ruleService.getUserFormatRules(testJwt)
 
-        val expectedDTOs = expectedRules.map {
-            RuleDTO(
-                id = it.id,
-                name = it.name,
-                value = it.value,
-                ruleType = it.type.name,
-                isActive = it.isActive,
-                updatedAt = it.updatedAt
-            )
-        }
+        val expectedDTOs =
+            expectedRules.map {
+                RuleDTO(
+                    id = it.id,
+                    name = it.name,
+                    value = it.value,
+                    ruleType = it.type.name,
+                    isActive = it.isActive,
+                    updatedAt = it.updatedAt,
+                )
+            }
         assertEquals(expectedDTOs, actualRules)
     }
-
 
     private fun ruleToSimpleRuleDTO(rule: Rule): SimpleRuleDTO {
         return SimpleRuleDTO(
