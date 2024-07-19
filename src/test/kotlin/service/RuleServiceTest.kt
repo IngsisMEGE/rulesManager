@@ -42,7 +42,7 @@ class RuleServiceTest {
             .build()
 
     @Test
-    fun `updateRule updates rules correctly`() {
+    fun updateRuleUpdatesRulesCorrectly() {
         val rulesToUpdate =
             listOf(
                 RuleDTO(1L, "Updated Rule 1", "New Value 1", "SCA", true, LocalDateTime.now()),
@@ -66,7 +66,7 @@ class RuleServiceTest {
     }
 
     @Test
-    fun `getFormatRules for user returns expected rules`() {
+    fun getFormatRulesForUserReturnsExpectedRules() {
         val expectedRules = listOf(Rule("rule5", true, RuleType.FORMATING, "value5"))
         whenever(ruleRepository.findUserFormatingRules("test@test.com")).thenReturn(expectedRules)
 
@@ -76,7 +76,7 @@ class RuleServiceTest {
     }
 
     @Test
-    fun `updateRule throws exception when rule not found`() {
+    fun updateRuleThrowsExceptionWhenRuleNotFound() {
         val rules =
             listOf(
                 RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
@@ -93,7 +93,7 @@ class RuleServiceTest {
     }
 
     @Test
-    fun `updateRuleOnUse throws exception when rule not found`() {
+    fun updateRuleOnUseThrowsExceptionWhenRuleNotFound() {
         val rules =
             listOf(
                 RuleDTO(1, "rule1", "newValue1", "SCA", true, LocalDateTime.now()),
