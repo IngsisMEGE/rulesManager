@@ -206,7 +206,6 @@ class RuleServiceImpl(
 
                 updateRuleProperties(ruleDTO, ruleToUpdate)
                 ruleToUpdate.updatedAt = LocalDateTime.now()
-
                 if (ruleToUpdate.type == RuleType.SCA || ruleToUpdate.type == RuleType.LINTING) {
                     runSCA = true
                 }
