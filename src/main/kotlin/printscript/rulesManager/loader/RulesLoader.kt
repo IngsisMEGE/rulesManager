@@ -16,51 +16,61 @@ class RulesLoader(private val commonRuleRepository: CommonRuleRepository) : Comm
                         name = "DotFront",
                         type = RuleType.FORMATING,
                         value = "1",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "DotBack",
                         type = RuleType.FORMATING,
                         value = "1",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "EqualFront",
                         type = RuleType.FORMATING,
                         value = "1",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "EqualBack",
                         type = RuleType.FORMATING,
                         value = "1",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "amountOfLines",
                         type = RuleType.FORMATING,
                         value = "1",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "Indentation",
                         type = RuleType.FORMATING,
                         value = "4",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "CamelCaseFormat",
                         type = RuleType.SCA,
                         value = "true",
+                        isActive = true
                     ),
                     CommonRule(
                         name = "SnakeCaseFormat",
                         type = RuleType.SCA,
                         value = "false",
+                        isActive = false
                     ),
                     CommonRule(
                         name = "MethodNoExpression",
                         type = RuleType.SCA,
                         value = "false",
+                        isActive = false
                     ),
                     CommonRule(
                         name = "InputNoExpression",
                         type = RuleType.SCA,
                         value = "false",
+                        isActive = false
                     ),
                 ),
             )
