@@ -14,7 +14,7 @@ data class Rule(
     @Column
     var name: String,
     @Column
-    var onUse: Boolean,
+    var isActive: Boolean,
     @Column
     var type: RuleType,
     @Column(nullable = true)

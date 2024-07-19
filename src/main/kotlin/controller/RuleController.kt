@@ -1,12 +1,8 @@
 package controller
 
-import com.newrelic.agent.deps.org.slf4j.MDC
 import dto.RuleDTO
 import dto.SimpleRuleDTO
-import logs.CorrIdFilter.Companion.CORRELATION_ID_KEY
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,20 +21,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getUserRules(userMail)
-        } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
-        }
-    }
-
-    @GetMapping("/get/user/lint")
-    fun getUserLintRules(
-        @AuthenticationPrincipal userData: Jwt,
-    ): List<SimpleRuleDTO> {
-        try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getLintRules(userMail)
+            return ruleService.getUserRules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -49,8 +32,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getFormatRules(userMail)
+            return ruleService.getFormatRules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -61,8 +43,7 @@ class RuleController(private val ruleService: RuleService) {
         @AuthenticationPrincipal userData: Jwt,
     ): List<SimpleRuleDTO> {
         try {
-            val userMail = userData.claims["email"].toString()
-            return ruleService.getSCARules(userMail)
+            return ruleService.getSCARules(userData)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
@@ -92,10 +73,26 @@ class RuleController(private val ruleService: RuleService) {
         }
     }
 
-    private fun getHeaders(): HttpHeaders {
-        return HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_JSON
-            set("X-Correlation-Id", MDC.get(CORRELATION_ID_KEY))
+    @GetMapping("/user/format/get")
+    fun getFormattingRoles(
+        @AuthenticationPrincipal userData: Jwt,
+    ): List<RuleDTO> {
+        try {
+            return ruleService.getUserFormatRules(userData)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
+        }
+    }
+
+    @PutMapping("user/update/rules")
+    fun updateRules(
+        @AuthenticationPrincipal userData: Jwt,
+        @RequestBody rules: List<RuleDTO>,
+    ): List<RuleDTO> {
+        try {
+            return ruleService.updateRules(userData, rules)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
         }
     }
 }
