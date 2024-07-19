@@ -8,7 +8,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import org.springframework.security.oauth2.jwt.Jwt
@@ -21,7 +23,7 @@ import printscript.rulesManager.repository.RuleRepository
 import printscript.rulesManager.service.SnippetManagerService
 import printscript.rulesManager.service.implementation.RuleServiceImpl
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class RuleServiceTest {

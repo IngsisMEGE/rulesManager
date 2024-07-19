@@ -25,5 +25,4 @@ interface RuleRepository : JpaRepository<Rule, Long> {
         @Param("userId") userEmail: String,
         @Param("type") type: RuleType = RuleType.SCA,
     ): List<Rule>
-
 }
