@@ -12,13 +12,13 @@ import jakarta.persistence.Table
 @Table(name = "rules")
 class Rule(
     @Column
-    var name: String,
+    var name: String = "",
     @Column
-    var isActive: Boolean,
+    var isActive: Boolean = false,
     @Column
-    var type: RuleType,
+    var type: RuleType = RuleType.FORMATING,
     @Column(nullable = true)
-    var value: String,
+    var value: String = "",
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
